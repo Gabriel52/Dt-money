@@ -1,8 +1,16 @@
 import React from 'react';
+import { Dashboard } from './components/Dashboard';
+import { Header } from './components/Header';
+import { GlobalStyled } from './styles/global';
 
 function App() {
   return (
-    <h2>Hello world</h2>
+    <>
+      <Header />
+      <Dashboard />
+      <GlobalStyled />
+    </>
+    
   );
 }
 
