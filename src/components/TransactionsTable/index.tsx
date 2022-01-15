@@ -1,6 +1,26 @@
+import { useEffect, useState } from 'react'
+// =======================================================
+import { api } from '../../services/api'
 import { ContainerStyled } from "./styled"
 
+type TransactionType = {
+    id?: number,
+    title: string,
+    amount: number,
+    type: string,
+    category: string,
+    createdAt: Date
+}
+
 export const TransactionsTable = ():JSX.Element => {
+    const locales = 'pt-BR'
+    const currencyMoney = 'BRL'
+    const [data, setData] = useState<TransactionType[] | []>([])
+    useEffect(()=> {
+        api.get('transactions')
+            .then(response => setData((response.data.transactions)))
+    },[])
+
     return (
         <ContainerStyled>
             <table>
@@ -14,18 +34,16 @@ export const TransactionsTable = ():JSX.Element => {
                 </thead>
 
                 <tbody>
-                    <tr>
-                        <td>Desenvolvimento de Website</td>
-                        <td className="deposit">R$12.000,00</td>
-                        <td>Desenvolvimento</td>
-                        <td>20/02/2021</td>
-                    </tr>
-                    <tr>
-                        <td>Aluguel</td>
-                        <td className="withdraw">- R$1.000,00</td>
-                        <td>Casa</td>
-                        <td>20/02/2022</td>
-                    </tr>
+                    {data.map((item:TransactionType)=> (
+                        <tr key={item.id}>
+                            <td>{item.title}</td>
+                            <td className={item.type}>
+                                {item.amount.toLocaleString(locales,{ style: 'currency', currency: currencyMoney} )}
+                            </td>
+                            <td>{item.category}</td>
+                            <td>{new Date(item.createdAt).toLocaleDateString(locales)}</td>
+                        </tr>
+                    ))}
                 </tbody>
             </table>
         </ContainerStyled>
