@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import Modal from 'react-modal';
 
 import { Dashboard } from './components/Dashboard';
 import { Header } from './components/Header';
 import { TransactionModal } from './components/TransactionModal';
 import { GlobalStyled } from './styles/global';
+import { TransactionsProvider } from './hooks/useTransaction';
 
 function App() {
   const [isOpenModalTransaction, setIsOpenModalTransaction] = useState<boolean>(false);
@@ -13,11 +13,11 @@ function App() {
   }
 
   const handleCloseModal = () => {
-      setIsOpenModalTransaction(false)
+    setIsOpenModalTransaction(false)
   }
 
   return (
-    <>
+    <TransactionsProvider>
       <Header 
         setIsOpenModalTransaction={setIsOpenModalTransaction} 
         handleOpenModal={handleOpenModal}
@@ -28,7 +28,7 @@ function App() {
         isOpenModalTransaction={isOpenModalTransaction} 
       />
       <GlobalStyled />
-    </>
+    </TransactionsProvider>
     
   );
 }

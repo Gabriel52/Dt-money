@@ -1,9 +1,7 @@
-import { useEffect, useState } from 'react'
-// =======================================================
-import { api } from '../../services/api'
+import { useTransactions } from "../../hooks/useTransaction"
 import { ContainerStyled } from "./styled"
 
-type TransactionType = {
+export type TransactionType = {
     id?: number,
     title: string,
     amount: number,
@@ -15,12 +13,8 @@ type TransactionType = {
 export const TransactionsTable = ():JSX.Element => {
     const locales = 'pt-BR'
     const currencyMoney = 'BRL'
-    const [data, setData] = useState<TransactionType[] | []>([])
-    useEffect(()=> {
-        api.get('transactions')
-            .then(response => setData((response.data.transactions)))
-    },[])
-
+    const { data } = useTransactions()
+    
     return (
         <ContainerStyled>
             <table>

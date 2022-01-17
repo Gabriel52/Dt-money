@@ -1,32 +1,48 @@
-import react, { FormEvent, useState } from 'react';
+import { FormEvent, useContext, useState } from 'react';
 import Modal from 'react-modal'
 // =============================================
-import { api } from '../../services/api';
 import closeImg from '../../assets/close.svg'
 import incomeImg from '../../assets/income.svg'
 import outcomeImg from '../../assets/outcome.svg'
-import { ButtonTransactionStyled, CloseButtonStyled, ContainerStyled, TransactionTypeContainer } from './styled';
+import { TransactionInput, useTransactions } from '../../hooks/useTransaction';
+import { 
+    ButtonTransactionStyled, 
+    CloseButtonStyled, 
+    ContainerStyled, 
+    TransactionTypeContainer 
+} from './styled';
 
 type Props = {
     isOpenModalTransaction: boolean,
     handleCloseModal: ()=> void;
 }
 export const TransactionModal = ({handleCloseModal, isOpenModalTransaction}:Props):JSX.Element => {
+    const { createTransaction } = useTransactions()
+    
+    
     const [type, setType ] = useState<string>('deposit')
     const [title, setTitle ] = useState<string>('')
     const [category, setCategory ] = useState<string>('')
-    const [value, setValue ] = useState<number>(0)
+    const [amount, setAmount ] = useState<number>(0)
 
-    const handleCreateNewTransaction =(evt: FormEvent) => {
+    const clearFields = () => {
+        setType('deposit')
+        setTitle('')
+        setCategory('')
+        setAmount(0)
+    }
+
+    const handleCreateNewTransaction = async (evt: FormEvent) => {
         evt.preventDefault();
-        const data = {
+        const data: TransactionInput = {
             title,
-            value,
+            amount,
             category,
             type
         }
-
-        api.post('/transactions', data)
+        await createTransaction(data)
+        handleCloseModal()
+        clearFields()
     }
 
     return (
@@ -53,14 +69,14 @@ export const TransactionModal = ({handleCloseModal, isOpenModalTransaction}:Prop
                 <input 
                     type="number" 
                     placeholder="Valor" 
-                    onChange={(evt)=> setValue(Number(evt.target.value))} 
-                    value={value}
+                    onChange={(evt)=> setAmount(Number(evt.target.value))} 
+                    value={amount}
                 />
 
                 <TransactionTypeContainer>
                     <ButtonTransactionStyled
                         type="button"
-                        isActive={type=="deposit"}
+                        isActive={type==="deposit"}
                         activeColor="green"
                         onClick={()=>{setType('deposit')}}
                     >
@@ -69,7 +85,7 @@ export const TransactionModal = ({handleCloseModal, isOpenModalTransaction}:Prop
                     </ButtonTransactionStyled>
                     <ButtonTransactionStyled
                         type="button"
-                        isActive={type=="withdraw"}
+                        isActive={type==="withdraw"}
                         activeColor="red"
                         onClick={()=>{setType('withdraw')}}
                     >
